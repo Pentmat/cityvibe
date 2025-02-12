@@ -1,10 +1,12 @@
-import React from "react";
-import { createStackNavigator } from "@react-navigation/stack"; // Stack navigator
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'; // Bottom Tab Navigator
-import { Ionicons } from "@expo/vector-icons"; // Optional for tab icons
-import { Button } from "react-native"; // For Logout Button
-import { signOut } from "firebase/auth"; // For Firebase sign-out
-import { auth } from "../firebase/firebaseConfig"; // Firebase config
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../firebase/firebaseConfig";
+import { getDatabase } from "firebase/database"; 
 
 // Import Screens
 import LoginScreen from "../screens/LoginScreen";
@@ -15,64 +17,85 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 // Bottom Tab Navigator
-const AppTabs = ({ navigation }) => {
+const AppTabs = () => {
   return (
     <Tab.Navigator>
-      {/* Locations tab */}
-      <Tab.Screen 
-        name="Locations" 
-        component={LocationsScreen} 
-        options={{
-          tabBarIcon: () => <Ionicons name="location" size={20} /> // Optional icon
-        }}
-      />
-      {/* Add Location tab */}
-      <Tab.Screen 
-        name="Add Location" 
-        component={AddLocationScreen} 
-        options={{
-          tabBarIcon: () => <Ionicons name="add-circle" size={20} /> // Optional icon
-        }}
-      />
-    </Tab.Navigator>
+    <Tab.Screen 
+      name="Locations" 
+      component={LocationsScreen} 
+      options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="location-outline" size={size} color={color} />
+        ),
+        headerShown: false, // Hide header for Locations screen
+      }}
+    />
+    <Tab.Screen 
+      name="Add Location" 
+      component={AddLocationScreen} 
+      options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="add-circle-outline" size={size} color={color} />
+        ),
+        headerShown: false, // Hide header for Add Location screen
+      }}
+    />
+  </Tab.Navigator>
   );
 };
 
 // Stack Navigator
 const AppNavigator = () => {
+  const [username, setUsername] = useState("User");
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUsername(userDoc.data().username); // Set username from Firestore
+          }
+        } catch (error) {
+          console.error("Error fetching username:", error.message);
+        }
+      } else {
+        setUsername("User"); // Reset if user logs out
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup subscription on unmount
+  }, []);
+
   return (
     <Stack.Navigator initialRouteName="LoginScreen">
       <Stack.Screen 
         name="LoginScreen" 
         component={LoginScreen} 
-        options={{ headerShown: false }} // Hide header on LoginScreen
+        options={{ headerShown: false }}  // Hide header for LoginScreen
       />
-      {/* Stack Screen for AppTabs to handle the bottom tabs */}
       <Stack.Screen 
         name="AppTabs" 
         component={AppTabs} 
         options={({ navigation }) => ({
-          title: "Home",
+          title: username,  // Display username in the center
+          headerTitleAlign: "center",
           headerLeft: () => (
-            <Button 
-              title="Profile" 
-              onPress={() => {}}
-            />
+            <TouchableOpacity onPress={() => {}} style={{ marginLeft: 15 }}>
+              <Ionicons name="person-circle-outline" size={28} color="black" />
+            </TouchableOpacity>
           ),
           headerRight: () => (
-            <Button 
-              title="Logout" 
+            <TouchableOpacity 
               onPress={() => {
-                signOut(auth)
-                  .then(() => {
-                    // Successfully logged out, navigate to LoginScreen
-                    navigation.replace("LoginScreen");
-                  })
-                  .catch((error) => {
-                    console.error(error.message);
-                  });
+                signOut(auth).then(() => {
+                  navigation.replace("LoginScreen");
+                }).catch((error) => console.error(error.message));
               }} 
-            />
+              style={{ marginRight: 15 }}
+            >
+              <Ionicons name="log-out-outline" size={28} color="black" />
+            </TouchableOpacity>
           ),
         })}
       />
