@@ -12,7 +12,8 @@ import { getDatabase } from "firebase/database";
 import LoginScreen from "../screens/LoginScreen";
 import LocationsScreen from "../screens/LocationsScreen";
 import AddLocationScreen from "../screens/AddLocationScreen";
-
+import MapScreen from "../screens/MapScreen";
+import CapitalsScreen from "../screens/CapitalsScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -30,6 +31,7 @@ const AppTabs = () => {
         headerShown: false, // Hide header for Locations screen
       }}
     />
+    
     <Tab.Screen 
       name="Add Location" 
       component={AddLocationScreen} 
@@ -40,6 +42,29 @@ const AppTabs = () => {
         headerShown: false, // Hide header for Add Location screen
       }}
     />
+
+<Tab.Screen 
+      name="Map" 
+      component={MapScreen}
+      options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="map-outline" size={size} color={color} />
+        ),
+        headerShown: false, // Hide header for Map screen
+      }}
+    />
+
+<Tab.Screen 
+      name="Capitals" 
+      component={CapitalsScreen}
+      options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="map-outline" size={size} color={color} />
+        ),
+        headerShown: false, // Hide header for Map screen
+      }}
+    />
+
   </Tab.Navigator>
   );
 };

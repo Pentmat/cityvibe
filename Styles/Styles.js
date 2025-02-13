@@ -21,14 +21,56 @@ const styles = StyleSheet.create({
     padding: 40,
   },
 
-    containerLocations: {
-      flex: 1,
-      backgroundColor: COLORS.background,
-      alignItems: "fixed",
-      justifyContent: "fixed",
-      padding: 40,
-     
-    },
+  containerLocations: {
+    flex: 1,
+    backgroundColor: COLORS.background,
+    padding: 20, 
+  },
+  
+  locationItem: {
+    backgroundColor: "#fff", // White background
+    borderRadius: 10, // Rounded corners
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // Shadow for Android
+    flexDirection: "column",
+  },
+  
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  
+  description: {
+    fontSize: 14,
+    color: "gray",
+    marginVertical: 5,
+  },
+  
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
+  },
+  
+  star: {
+    marginRight: 3,
+  },
+  
+  mapIcon: {
+    color: "red",
+    fontSize: 22,
+  },
 
   gradientBackground: {
     flex: 1,
