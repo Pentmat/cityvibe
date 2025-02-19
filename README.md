@@ -17,7 +17,7 @@ CityVibe is a mobile application developed as part of a mobile programming exerc
 
 ### 1. Clone the repository
 ```sh
-git clone https://github.com/YOUR-USERNAME/CityVibe.git
+git clone https://github.com/Pentmat/cityvibe.git
 cd CityVibe
 ```
 
