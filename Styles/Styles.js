@@ -123,7 +123,20 @@ const styles = StyleSheet.create({
   emptySpace: {
 
     height: 25,
-  }
+  },
+
+  deleteButton: {
+    padding: 10,
+    alignSelf: "right",
+  },
+
+  flag: {
+    width: 80, // Increase size
+    height: 50,
+    borderRadius: 5,
+    backgroundColor: "#f0f0f0", // Helps debug visibility
+  },
+
 });
 
 // Gradient Wrapper Component

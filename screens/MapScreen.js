@@ -3,14 +3,17 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 
+// MapScreen Component - Displays a map with the location marker
 const MapScreen = () => {
   const route = useRoute();
-  const placeName = route.params?.placeName || "Äänekoski, Pub markus"; // Default location
 
-  const [loading, setLoading] = useState(true);
-  const [coordinates, setCoordinates] = useState(null);
+  // Get the place name from navigation parameters or set a default location
+  const placeName = route.params?.placeName || "Äänekoski, Pub markus";
 
-  // Fetch coordinates from OpenStreetMap (Nominatim API)
+  const [loading, setLoading] = useState(true); // State for loading indicator
+  const [coordinates, setCoordinates] = useState(null); // State to store fetched coordinates
+
+  // Fetch coordinates using OpenStreetMap (Nominatim API)
   useEffect(() => {
     const fetchCoordinates = async () => {
       try {
@@ -20,7 +23,7 @@ const MapScreen = () => {
           )}&format=json`,
           {
             headers: {
-              "User-Agent": "MyApp/1.0 (contact@myapp.com)", // Custom User-Agent
+              "User-Agent": "MyApp/1.0 (contact@myapp.com)", // Custom User-Agent for API request
               "Accept-Language": "en",
             },
           }
@@ -29,6 +32,7 @@ const MapScreen = () => {
         const data = await response.json();
 
         if (data.length > 0) {
+          // Extract latitude and longitude from API response
           setCoordinates({
             latitude: data[0].lat,
             longitude: data[0].lon,
@@ -39,13 +43,14 @@ const MapScreen = () => {
       } catch (error) {
         console.error("Error fetching location:", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Hide loading indicator after fetching data
       }
     };
 
     fetchCoordinates();
-  }, [placeName]);
+  }, [placeName]); // Runs whenever the placeName changes
 
+  // Show loading indicator while fetching data
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -58,6 +63,7 @@ const MapScreen = () => {
   return (
     <View style={{ flex: 1 }}>
       {coordinates ? (
+        // Display interactive map using Leaflet inside a WebView
         <WebView
           style={{ flex: 1 }}
           source={{
@@ -72,10 +78,15 @@ const MapScreen = () => {
               <body>
                 <div id="map" style="width: 100%; height: 100vh;"></div>
                 <script>
+                  // Initialize map with fetched coordinates
                   var map = L.map('map').setView([${coordinates.latitude}, ${coordinates.longitude}], 13);
+                  
+                  // Add OpenStreetMap tiles to the map
                   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '© OpenStreetMap contributors'
                   }).addTo(map);
+                  
+                  // Add a marker at the given coordinates with a popup
                   L.marker([${coordinates.latitude}, ${coordinates.longitude}]).addTo(map)
                     .bindPopup('${placeName}')
                     .openPopup();
@@ -86,6 +97,7 @@ const MapScreen = () => {
           }}
         />
       ) : (
+        // Display message if location is not found
         <Text style={{ textAlign: "center", marginTop: 20 }}>
           Location not found
         </Text>
