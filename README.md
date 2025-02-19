@@ -1,7 +1,6 @@
 # CityVibe
 
-CityVibe is a mobile application developed as part of a mobile programming exercise at OAMK. The app allows users to review and rate different locations within a city.
-
+CityVibe is a mobile application developed as part of a mobile programming exercise at OAMK. The app allows users to review and rate different locations.
 ## Features
 - Search for cities and locations
 - Leave reviews and ratings for places
